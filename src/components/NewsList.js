@@ -16,7 +16,7 @@ const NewsListBlock = styled.div`
   }
 `;
 
-const NewsList = () => {
+const NewsList = ({ category }) => {
   const [articles, setArticles] = useState(null);
 
   useEffect(() => {
@@ -26,8 +26,9 @@ const NewsList = () => {
     // 응답 두개 이상 대기 시 순서가 필요하다면 하나의 useEffect 안에 나열하면 되고, 상관없다면 useEffect 를 두개로 분리 혹은 async 2개 사용
     const fetchData = async () => {
       try {
+        const query = category === "all" ? "all" : `category=${category}`;
         const response = await axios.get(
-          "https://newsapi.org/v2/top-headlines?country=us&apiKey=8fa27a481cdf4b9f8e5e99d728c3847d"
+          `https://newsapi.org/v2/top-headlines?country=us&${query}&apiKey=8fa27a481cdf4b9f8e5e99d728c3847d`
         );
         setArticles(response.data.articles); // head빼고 데이터, 그리고 객체 안에서 기사 배열만 뽑음
       } catch (e) {
@@ -35,7 +36,7 @@ const NewsList = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [category]); // [] 의존성 배열이 비어있으면 mount 시점(즉, 컴퍼넌트 렌더링 이후)에 호출
   return (
     <NewsListBlock>
       {articles &&
